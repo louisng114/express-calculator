@@ -9,12 +9,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/mean", (req, res) => {
+app.get("/mean", (req, res, next) => {
     const nums = req.query.nums;
     if (!nums){
-        throw new ExpressError("Nums are required!", 400);
+        const error = new ExpressError("Nums are required!", 400);
+        return next(error);
     }
-    const mean = findMean(nums);
+    const mean = findMean(nums, next);
     const result = {
             operation : "mean",
             value : mean
@@ -32,9 +33,10 @@ app.get("/mean", (req, res) => {
 app.get("/median", (req, res) => {
     const nums = req.query.nums;
     if (!nums){
-        throw new ExpressError("Nums are required!", 400);
+        const error = new ExpressError("Nums are required!", 400);
+        return next(error);
     }
-    const median = findMedian(nums);
+    const median = findMedian(nums, next);
     const result = {
             operation : "median",
             value : median
@@ -52,9 +54,10 @@ app.get("/median", (req, res) => {
 app.get("/mode", (req, res) => {
     const nums = req.query.nums;
     if (!nums){
-        throw new ExpressError("Nums are required!", 400);
+        const error = new ExpressError("Nums are required!", 400);
+        return next(error);
     }
-    const mode = findMode(nums);
+    const mode = findMode(nums, next);
     const result = {
             operation : "mode",
             value : mode
@@ -72,11 +75,12 @@ app.get("/mode", (req, res) => {
 app.get("/all", (req, res) => {
     const nums = req.query.nums;
     if (!nums){
-        throw new ExpressError("Nums are required!", 400);
+        const error = new ExpressError("Nums are required!", 400);
+        return next(error);
     }
-    const mean = findMean(nums);
-    const median = findMedian(nums);
-    const mode = findMode(nums);
+    const mean = findMean(nums, next);
+    const median = findMedian(nums, next);
+    const mode = findMode(nums, next);
     const result = { operation : "all",
             mean : mean,
             median : median,
@@ -96,14 +100,15 @@ app.use(function (req, res, next) {
     const notFoundError = new ExpressError("Not Found", 404);
     return next(notFoundError)
 });
-
+  
 app.use(function(err, req, res, next) {
     let status = err.status || 500;
     let message = err.message;
+  
     return res.status(status).json({
         error: {message, status}
+        });
 });
-
 
 app.listen(3000, function(){
     console.log('App on port 3000');

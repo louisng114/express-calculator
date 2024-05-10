@@ -1,10 +1,11 @@
 const ExpressError = require("./expressError");
 
-const findMean = (str) => {
+const findMean = (str, next) => {
     const numsStrArr = [...str.split(",")];
     const numsArr = numsStrArr.map((val) => {
         if (isNaN(val)) {
-            throw new ExpressError(`${val} is not a number!`, 400);
+            const error = new ExpressError(`${val} is not a number!`, 400);
+            return next(error);
         }
         return Number(val);
     })
@@ -16,7 +17,8 @@ const findMedian = (str) => {
     const numsStrArr = [...str.split(",")];
     const numsArr = numsStrArr.map((val) => {
         if (isNaN(val)) {
-            throw new ExpressError(`${val} is not a number!`, 400);
+            const error = new ExpressError(`${val} is not a number!`, 400);
+            return next(error);
         }
         return Number(val);
     })
@@ -30,7 +32,8 @@ const findMode = (str) => {
     const numsStrArr = [...str.split(",")];
     const numsArr = numsStrArr.map((val) => {
         if (isNaN(val)) {
-            throw new ExpressError(`${val} is not a number!`, 400);
+            const error = new ExpressError(`${val} is not a number!`, 400);
+            return next(error);
         }
         return Number(val);
     })
